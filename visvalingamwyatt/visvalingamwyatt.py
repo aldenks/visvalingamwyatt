@@ -195,6 +195,19 @@ class Simplifier(object):
             return self.by_ratio(ratio)
 
     def by_threshold(self, threshold):
+        if len(self.pts) <= 4:
+            return np.array(self.pts)
+
+        # If there were originally >= 4 points, try to return at least 4.
+        # This prevents simplifying geojson polygon rings so much they become invalid.
+        pts = self._by_threshold(threshold)
+        while len(pts) < 4 and threshold > 1e-12:
+            threshold = threshold / 2
+            pts = self._by_threshold(threshold)
+
+        return pts
+
+    def _by_threshold(self, threshold):
         return self.pts[self.thresholds >= threshold]
 
     def by_number(self, n):

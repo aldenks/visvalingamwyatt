@@ -55,3 +55,12 @@ class TestCase(unittest.TestCase):
         a = vw.simplify(coordinates)
         assert a[0] == [0, 0, 0]
         assert len(a) <= len(coordinates)
+
+    def testMinimumRingSize(self):
+        """ Polygon rings with < 4 points are invalid in geojson. """
+        coordinates = [[0.0, 0.0], [1.1, 0], [2.1, 3], [4.1, 5], [1.1, 2], [5.1, 2], [0.0, 0.0]]
+        a = vw.simplify(coordinates, threshold=1.5)
+        assert a[0] == [0, 0]
+        assert a[-1] == [0, 0]
+        assert len(a) <= len(coordinates)
+        assert len(coordinates) >= 4
